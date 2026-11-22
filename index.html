@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Studies 30-Question Assessment — Combined Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0F172A; color: #F8FAFC; }
+        h1, h2, h3, .font-heading { font-family: 'Chakra Petch', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-950 text-slate-100 select-none">
+
+    <!-- STICKY TOP BAR -->
+    <header class="sticky top-0 z-30 bg-slate-900/95 backdrop-blur-md border-b border-emerald-500/30 px-4 py-3 shadow-lg">
+        <div class="max-w-3xl mx-auto flex justify-between items-center gap-3">
+            <div class="flex items-center gap-2.5">
+                <div class="bg-gradient-to-tr from-emerald-400 to-cyan-500 p-2 rounded-xl text-slate-950 font-bold">
+                    <i class="fa-solid fa-globe text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-white uppercase leading-none">
+                        Social Studies Assessment (30 Qs)
+                    </h1>
+                    <p class="text-[11px] text-emerald-400 mt-0.5">Governance, Culture, Nigeria & Global Inequalities</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <div class="bg-slate-800 border border-amber-400/40 px-3 py-1.5 rounded-xl text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-star"></i>
+                    <span id="live-score">0</span>/<span id="live-answered">0</span>
+                </div>
+                <button onclick="resetSocialTest()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-xl border border-slate-700 flex items-center gap-1.5">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span class="hidden sm:inline">Reset</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 max-w-3xl w-full mx-auto p-4 pb-24 space-y-4">
+        <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl p-4">
+            <div class="flex flex-wrap gap-1.5">
+                <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                    Q1–Q20: Nigerian Heritage, Culture, Patriotism & Governance
+                </span>
+                <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                    Q21–Q30: Global Inequalities
+                </span>
+            </div>
+            <h2 class="text-lg sm:text-xl font-bold text-white mt-2">
+                30-Question Social Studies Assessment
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">
+                Tap the best multiple-choice option for each question to check your answer and see the explanation.
+            </p>
+        </div>
+
+        <div id="questions-list" class="space-y-4"></div>
+
+        <div class="bg-gradient-to-r from-slate-900 to-slate-800 border border-emerald-500/40 rounded-2xl p-5 text-center space-y-2 mt-6">
+            <h3 class="text-lg font-bold text-white">Social Studies Score Summary</h3>
+            <p class="text-xs text-slate-300">
+                Answered: <strong id="summary-answered" class="text-emerald-400">0</strong> / <strong class="text-white">30</strong> &nbsp;|&nbsp;
+                Score: <strong id="summary-correct" class="text-amber-400">0</strong> / <strong class="text-white">30</strong>
+            </p>
+        </div>
+    </main>
+
+    <script>
+        const socialQuestions = [
+            // PART 1: NIGERIAN HERITAGE, CULTURE, PATRIOTISM & GOVERNANCE (Q1–Q20)
+            { topic: "Culture & Ethnic Groups", q: "Which three major ethnic groups are traditionally recognized as the largest in Nigeria?", options: ["Hausa-Fulani, Yoruba, and Igbo", "Tiv, Kanuri, and Ijaw", "Edo, Nupe, and Efik", "Idoma, Igala, and Urhobo"], correct: 0, exp: "Hausa-Fulani, Yoruba, and Igbo are the three largest ethnic groups in Nigeria alongside many other diverse ethnic groups." },
+            { topic: "Culture & Symbols", q: "What do the two green stripes on the Nigerian National Flag represent?", options: ["Agriculture and natural wealth", "Peace and unity", "The River Niger and River Benue", "Strength and courage"], correct: 0, exp: "The green stripes stand for Nigeria's rich agricultural land and natural wealth, while the white stripe represents peace." },
+            { topic: "Culture & Symbols", q: "On the Nigerian Coat of Arms, what does the silver 'Y' shape on the black shield represent?", options: ["The confluence of the River Niger and River Benue", "The two white horses", "Nigeria's agricultural crops", "The red eagle"], correct: 0, exp: "The silver 'Y' represents the meeting point of the River Niger and River Benue at Lokoja." },
+            { topic: "Culture & Symbols", q: "Which national motto is written on the scroll at the base of the Nigerian Coat of Arms?", options: ["Unity and Faith, Peace and Progress", "One Nation, One Destiny", "Justice, Liberty, and Equality", "Service and Integrity"], correct: 0, exp: "Nigeria's official motto on the Coat of Arms is 'Unity and Faith, Peace and Progress'." },
+            { topic: "Culture & Heritage", q: "Which of the following is an example of material culture?", options: ["Traditional woven cloth like Aso-Oke and Akwete", "Folk tales and proverbs", "Respect for elders", "Religious beliefs"], correct: 0, exp: "Material culture consists of physical objects people create and use, such as traditional clothing, crafts, and tools." },
+            { topic: "Nigerian History", q: "In what year did Nigeria gain independence from British colonial rule?", options: ["1960", "1914", "1963", "1979"], correct: 0, exp: "Nigeria became an independent nation on October 1, 1960." },
+            { topic: "Nigerian History", q: "What major historical event took place in 1914 involving the Northern and Southern Protectorates?", options: ["The Amalgamation of Northern and Southern Nigeria", "Nigeria became a republic", "The capital moved to Abuja", "The first general election was held"], correct: 0, exp: "In 1914, the Northern and Southern Protectorates were amalgamated into a single administration." },
+            { topic: "Patriotism & Values", q: "What is patriotism?", options: ["Deep love, loyalty, and willingness to serve one's country", "Disliking people from other countries", "Refusing to learn about national history", "Only cheering during sports matches"], correct: 0, exp: "Patriotism means active love, respect, and commitment to the peace and progress of one's country." },
+            { topic: "Patriotism & Values", q: "Why should citizens stand at attention when the National Anthem is played or sung?", options: ["To show respect, patriotism, and loyalty to the nation", "Because it is a physical exercise", "Only when a camera is recording", "To signal the end of school"], correct: 0, exp: "Standing at attention shows respect and loyalty to an important national symbol." },
+            { topic: "Patriotism & Values", q: "What does the value of 'integrity' mean in everyday life?", options: ["Being honest and doing the right thing even when no one is watching", "Winning an argument at any cost", "Following rules only when watched", "Hiding mistakes from everyone"], correct: 0, exp: "Integrity is consistent honesty, trustworthiness, and strong moral character." },
+            { topic: "Citizenship & Duties", q: "Alongside enjoying their rights, what is a key civic duty of every good citizen?", options: ["Obeying laws and paying taxes honestly", "Ignoring community sanitation", "Damaging public street signs", "Spreading false rumors"], correct: 0, exp: "Citizenship combines constitutional rights with duties like obeying laws, paying taxes, and caring for public property." },
+            { topic: "Citizenship & Duties", q: "Which of the following is a fundamental right protected for citizens?", options: ["Right to life and personal liberty", "Right to disobey traffic rules", "Right to take someone else's property", "Right to refuse paying lawful taxes"], correct: 0, exp: "Fundamental rights include the right to life, dignity, freedom of expression, and fair hearing." },
+            { topic: "Governance", q: "What are the three tiers (levels) of government in Nigeria?", options: ["Federal, State, and Local Government", "Executive, Legislative, and Judicial", "Primary, Secondary, and Tertiary", "North, East, and West"], correct: 0, exp: "Nigeria has three levels of government: Federal, State, and Local Governments." },
+            { topic: "Governance", q: "Which tier of government is closest to local communities and handles local markets, primary healthcare centers, and local streets?", options: ["Local Government", "Federal Government", "Supreme Court", "National Assembly"], correct: 0, exp: "Local Government operates closest to grassroots communities to deliver everyday local services." },
+            { topic: "Governance", q: "What are the three arms of government in a democracy?", options: ["Executive, Legislature, and Judiciary", "Federal, State, and Ward", "Army, Navy, and Air Force", "School, Hospital, and Market"], correct: 0, exp: "Democratic government is divided into the Executive, Legislature, and Judiciary." },
+            { topic: "Governance", q: "Which arm of government is responsible for making laws?", options: ["The Legislature", "The Judiciary", "The Police Force", "The Civil Service"], correct: 0, exp: "The Legislature debates and passes laws." },
+            { topic: "Governance", q: "What is the main role of the Judiciary?", options: ["Interpreting laws and settling disputes fairly in court", "Constructing federal highways", "Collecting market fees", "Commanding the armed forces"], correct: 0, exp: "The Judiciary interprets laws and administers justice fairly." },
+            { topic: "Family & Community", q: "How does a nuclear family differ from an extended family?", options: ["A nuclear family has parents and children; an extended family includes grandparents, aunts, uncles, and cousins", "A nuclear family includes the whole town", "An extended family has no parents", "There is no difference between them"], correct: 0, exp: "A nuclear family consists of parents and children, while an extended family includes wider relatives." },
+            { topic: "Family & Community", q: "Why is peaceful conflict resolution important in a community?", options: ["It resolves disagreements through dialogue without violence", "It stops people from speaking", "It turns small issues into big fights", "It ignores the problem"], correct: 0, exp: "Dialogue and mediation settle disputes peacefully while keeping the community united." },
+            { topic: "Family & Community", q: "Why should communities protect public facilities such as schools, clinics, and boreholes?", options: ["They serve everyone and are costly to replace if damaged", "Only tourists can use them", "They repair themselves automatically", "They belong to no one"], correct: 0, exp: "Public infrastructure is built for shared community benefit and should be protected." },
+
+            // PART 2: GLOBAL INEQUALITIES (Q21–Q30)
+            { topic: "Global Inequalities", q: "What is 'global inequality'?", options: ["Unequal access to wealth, resources, and opportunities among people around the world", "Having different time zones across countries", "Speaking different languages in different nations", "Having different seasons in different regions"], correct: 0, exp: "Global inequality refers to unequal access to wealth, basic resources, and opportunities worldwide." },
+            { topic: "Global Inequalities", q: "In the Global Inequalities lesson, what does the 'pizza analogy' illustrate?", options: ["A small group holds most of the wealth while many share a tiny portion", "Every country gets the exact same slice", "Wealth is split evenly across all continents", "Only farmers share the slices"], correct: 0, exp: "The pizza analogy shows how wealth and resources can be concentrated in a small share while many receive less." },
+            { topic: "Global Inequalities", q: "Which situation best describes 'Absolute Poverty'?", options: ["Lacking basic survival needs such as clean water, food, shelter, and healthcare", "Having an older phone than classmates", "Being unable to take a luxury vacation", "Earning slightly below the city average"], correct: 0, exp: "Absolute poverty means not having enough to meet essential human survival needs like food, clean water, and shelter." },
+            { topic: "Global Inequalities", q: "How does 'Relative Poverty' differ from 'Absolute Poverty'?", options: ["Relative poverty means having much less than the average standard of living in one's society", "Relative poverty always means lacking drinking water", "Relative poverty only happens in villages", "There is no difference between them"], correct: 0, exp: "Relative poverty measures a household's standard of living compared with the rest of its society." },
+            { topic: "Global Inequalities", q: "What are the four socioeconomic class tiers shown in the lesson's class pyramid?", options: ["Upper Class, Middle Class, Working Class, and Below Poverty Line", "Royalty, Knights, Merchants, and Farmers", "Executive, Legislature, Judiciary, and Citizens", "Federal, State, Local, and Ward"], correct: 0, exp: "The class pyramid covers Upper Class, Middle Class, Working Class, and Below Poverty Line." },
+            { topic: "Global Inequalities", q: "What is 'Social Mobility'?", options: ["The ability of an individual or family to move up or down the socioeconomic class pyramid", "Moving from one city to another by bus", "Trading snacks at school", "Changing the shape of a triangle"], correct: 0, exp: "Social mobility is upward or downward movement between socioeconomic classes over time." },
+            { topic: "Global Inequalities", q: "According to the Gender Barriers & Equity lesson, about how many girls worldwide are out of school?", options: ["122 million girls", "12 thousand girls", "1.2 million girls", "500 thousand girls"], correct: 0, exp: "The lesson highlights that around 122 million girls worldwide are out of school." },
+            { topic: "Global Inequalities", q: "What is 'unpaid care work' and how can it affect girls and women?", options: ["Household chores, fetching water, and caring for family members that reduce time for school or paid work", "Volunteering once a year at a library", "Receiving overtime pay at an office", "Playing sports after school"], correct: 0, exp: "Unpaid care work such as chores and fetching water can limit time available for schooling and paid jobs." },
+            { topic: "Global Inequalities", q: "What is the difference between 'Equality' and 'Equity'?", options: ["Equality gives everyone the same thing; equity gives people the specific support they need for a fair chance", "Equality and equity mean the exact opposite of fairness", "Equity means ignoring barriers", "Equality is only used in math"], correct: 0, exp: "Equity provides targeted support to remove barriers so everyone has a fair opportunity to succeed." },
+            { topic: "Global Inequalities", q: "In the Oakhaven Village Policy Lab, what solution helps solve low school attendance caused by long walks for water?", options: ["Building clean water infrastructure closer to the village", "Closing the village school", "Making water walks longer", "Banning girls from school"], correct: 0, exp: "Local clean water infrastructure saves time spent fetching water and helps children—especially girls—stay in school." }
+        ];
+
+        const state = { answers: {}, score: 0 };
+
+        function renderQuestions() {
+            const listEl = document.getElementById('questions-list');
+            listEl.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
+
+            socialQuestions.forEach((item, idx) => {
+                const answeredIdx = state.answers[idx];
+                const isAnswered = answeredIdx !== undefined;
+                const isGlobal = item.topic === "Global Inequalities";
+
+                const card = document.createElement('div');
+                card.className = "bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-md space-y-3";
+
+                let optionsHtml = '<div class="grid grid-cols-1 gap-2 pt-1">';
+                item.options.forEach((opt, optIdx) => {
+                    let btnClass = "w-full p-3 rounded-xl border text-left text-xs sm:text-sm font-medium transition-all flex items-center justify-between gap-2 ";
+                    let iconHtml = `<span class="w-6 h-6 rounded-full bg-slate-800 border border-slate-600 flex items-center justify-center text-[11px] font-bold shrink-0">${letters[optIdx]}</span>`;
+
+                    if (!isAnswered) {
+                        btnClass += "bg-slate-950/70 border-slate-700 hover:border-emerald-400 text-slate-200 active:scale-[0.99]";
+                    } else {
+                        if (optIdx === item.correct) {
+                            btnClass += "bg-emerald-950/50 border-emerald-500 text-emerald-200 font-semibold";
+                            iconHtml = `<span class="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center text-xs font-bold shrink-0"><i class="fa-solid fa-check"></i></span>`;
+                        } else if (optIdx === answeredIdx) {
+                            btnClass += "bg-rose-950/50 border-rose-500 text-rose-200";
+                            iconHtml = `<span class="w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs font-bold shrink-0"><i class="fa-solid fa-xmark"></i></span>`;
+                        } else {
+                            btnClass += "bg-slate-950/40 border-slate-800 text-slate-500 opacity-60";
+                        }
+                    }
+
+                    optionsHtml += `
+                        <button onclick="selectAnswer(${idx}, ${optIdx})" ${isAnswered ? 'disabled' : ''} class="${btnClass}">
+                            <div class="flex items-center gap-2.5">
+                                ${iconHtml}
+                                <span>${opt}</span>
+                            </div>
+                        </button>
+                    `;
+                });
+                optionsHtml += '</div>';
+
+                let feedbackHtml = '';
+                if (isAnswered) {
+                    const gotItRight = answeredIdx === item.correct;
+                    feedbackHtml = `
+                        <div class="p-3 rounded-xl text-xs leading-relaxed ${gotItRight ? 'bg-emerald-950/40 border border-emerald-500/40 text-emerald-300' : 'bg-amber-950/40 border border-amber-500/40 text-amber-200'}">
+                            <strong>${gotItRight ? '✓ Correct:' : '→ Explanation:'}</strong> ${item.exp}
+                        </div>
+                    `;
+                }
+
+                const badgeClass = isGlobal
+                    ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/30"
+                    : "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30";
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="px-2.5 py-0.5 rounded-lg bg-slate-800 text-emerald-400 font-mono font-bold text-xs">
+                            Q${idx + 1}
+                        </span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${badgeClass}">
+                            ${item.topic}
+                        </span>
+                    </div>
+                    <p class="text-sm sm:text-base font-semibold text-white leading-snug">
+                        ${item.q}
+                    </p>
+                    ${optionsHtml}
+                    ${feedbackHtml}
+                `;
+                listEl.appendChild(card);
+            });
+        }
+
+        function selectAnswer(qIdx, optIdx) {
+            if (state.answers[qIdx] !== undefined) return;
+            state.answers[qIdx] = optIdx;
+            if (optIdx === socialQuestions[qIdx].correct) {
+                state.score++;
+                if (state.score === 30) {
+                    confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
+                }
+            }
+            renderQuestions();
+            updateStats();
+        }
+
+        function updateStats() {
+            const answeredCount = Object.keys(state.answers).length;
+            const scoreCount = state.score;
+            document.getElementById('live-score').innerText = scoreCount;
+            document.getElementById('live-answered').innerText = answeredCount;
+            document.getElementById('summary-answered').innerText = answeredCount;
+            document.getElementById('summary-correct').innerText = scoreCount;
+        }
+
+        function resetSocialTest() {
+            state.answers = {};
+            state.score = 0;
+            renderQuestions();
+            updateStats();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.onload = function() {
+            renderQuestions();
+            updateStats();
+        };
+    </script>
+</body>
+</html>
